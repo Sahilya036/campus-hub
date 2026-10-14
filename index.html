@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Campus Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F4EE;--sf:#fff;--ink:#17262B;--mute:#64767B;--line:#DCE2DA;--acc:#2B49D6;--on:#fff;--warn:#E8A317;--bad:#D2443B;--ok:#2E8B57;--n0:#FFF3C4;--n1:#D8F0E2;--n2:#DCE4FF;--n3:#FFDCD6;--r:14px}
+[data-theme=dark]{--bg:#0F1A1E;--sf:#17262B;--ink:#E8EEEA;--mute:#8FA3A8;--line:#27393F;--acc:#7C93FF;--on:#0F1A1E;--warn:#F2B632;--bad:#FF7A70;--ok:#5FD09A;--n0:#4A4224;--n1:#21443A;--n2:#27325E;--n3:#4F2D2A}
+*{box-sizing:border-box;margin:0}
+body{font:16px/1.5 'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+h1,h2,h3,.big{font-family:'Bricolage Grotesque','DM Sans',sans-serif;letter-spacing:-.02em}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+nav{position:sticky;top:0;height:100vh;padding:24px 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.brand{font:800 22px 'Bricolage Grotesque',sans-serif;padding:0 10px 18px}
+nav button{text-align:left;background:none;border:0;padding:10px 12px;border-radius:10px;color:var(--mute);font-weight:500}
+nav button:hover{background:var(--line);color:var(--ink)}
+nav button.on{background:var(--acc);color:var(--on)}
+nav .sp{flex:1}
+main{padding:36px clamp(16px,4vw,48px);max-width:1000px;width:100%}
+.view{display:none}.view.on{display:block}
+h2{font-size:30px;margin-bottom:4px}
+.sub{color:var(--mute);margin-bottom:22px}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+form.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+input,select,textarea{background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:0}
+input[type=text],textarea{flex:1 1 160px}
+.btn{background:var(--acc);color:var(--on);border:0;border-radius:10px;padding:9px 16px;font-weight:700}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:5px 10px;font-size:14px}
+.empty{padding:34px 16px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:var(--r)}
+.now{background:var(--acc);color:var(--on);border-radius:var(--r);padding:28px;margin-bottom:14px}
+.now .big{font-size:clamp(30px,5vw,48px);font-weight:800;line-height:1.1}
+.stats{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:14px}
+.stat b{display:block;font:800 30px 'Bricolage Grotesque',sans-serif}
+.stat span{color:var(--mute);font-size:14px}
+.task{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:8px;border-left:5px solid var(--line)}
+.task.warm{border-left-color:var(--warn)}.task.hot,.task.late{border-left-color:var(--bad)}.task.done{opacity:.55}
+.task.done .tt{text-decoration:line-through}
+.task .tt{font-weight:700}.task small{color:var(--mute)}.task.hot small,.task.late small{color:var(--bad)}
+.task .grow{flex:1}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--mute);background:none;display:grid;place-items:center;padding:0;transition:.2s}
+.chk svg{width:16px;height:16px;fill:none;stroke:var(--on);stroke-width:3;stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .3s}
+.done .chk{background:var(--ok);border-color:var(--ok)}.done .chk svg{stroke-dashoffset:0}
+.x{background:none;border:0;color:var(--mute);font-size:20px;line-height:1}.x:hover{color:var(--bad)}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tabs button{background:none;border:1px solid var(--line);border-radius:99px;padding:5px 14px}
+.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.att{display:flex;gap:14px;align-items:center}
+.att .grow{flex:1}.att h3{font-size:18px}.att p{font-size:14px;color:var(--mute);margin:4px 0 10px}
+.ring{width:84px;height:84px;flex:none}
+.ring circle{fill:none;stroke-width:9}
+.ring .bg{stroke:var(--line)}.ring .fg{stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .6s}
+.ring text{font:800 22px 'Bricolage Grotesque';fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.tt-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.day h3{font-size:15px;margin-bottom:8px;color:var(--mute)}.day.today h3{color:var(--acc)}
+.slot{background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:14px;display:flex;justify-content:space-between;gap:6px}
+.slot.cur{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc)}
+.slot small{color:var(--mute);display:block}
+.gp{display:grid;grid-template-columns:1fr 90px 90px 30px;gap:8px;margin-bottom:8px}
+.res{display:flex;gap:30px;margin-top:18px;flex-wrap:wrap}
+.res .big{font-size:52px;font-weight:800;color:var(--acc);line-height:1}
+.notes{columns:220px;column-gap:14px}
+.note{break-inside:avoid;border-radius:12px;padding:14px;margin-bottom:14px;white-space:pre-wrap;position:relative;color:var(--ink)}
+.note .x{position:absolute;top:6px;right:8px}
+.pomo{text-align:center;max-width:380px}
+.pomo .ring{width:240px;height:240px;margin:14px auto}
+.pomo .ring text{font-size:20px}
+.pomo .ring circle{stroke-width:6}
+.pomo .acts{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.tabs.c{justify-content:center}
+@media(max-width:720px){
+ body{grid-template-columns:1fr;padding-bottom:64px}
+ nav{position:fixed;inset:auto 0 0 0;height:auto;flex-direction:row;overflow-x:auto;padding:6px;background:var(--bg);border:0;border-top:1px solid var(--line);z-index:5}
+ .brand,nav .sp{display:none}
+ nav button{white-space:nowrap;padding:10px;font-size:14px}
+ .gp{grid-template-columns:1fr 70px 80px 26px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<nav>
+ <div class="brand">Campus Hub</div>
+ <button data-v="home" class="on">Today</button>
+ <button data-v="tasks">Assignments</button>
+ <button data-v="att">Attendance</button>
+ <button data-v="tt">Timetable</button>
+ <button data-v="gpa">Grades</button>
+ <button data-v="notes">Notes</button>
+ <button data-v="focus">Focus</button>
+ <div class="sp"></div>
+ <button id="theme">Switch theme</button>
+</nav>
+<main>
+
+<section class="view on" id="v-home">
+ <h2 id="greet">Hello</h2><p class="sub" id="date"></p>
+ <div class="now"><div id="nowlbl" style="opacity:.8"></div><div class="big" id="nowbig"></div><div id="nowsub" style="margin-top:6px"></div></div>
+ <div class="stats" id="stats"></div>
+ <h3 style="margin:22px 0 10px">Due next</h3><div id="soon"></div>
+</section>
+
+<section class="view" id="v-tasks">
+ <h2>Assignments</h2><p class="sub">Red means due within 24 hours or overdue. Amber means within 3 days.</p>
+ <form class="row" id="tf">
+  <input type="text" id="tn" placeholder="Assignment title" required>
+  <input type="text" id="ts" placeholder="Subject" style="flex:0 1 140px">
+  <input type="datetime-local" id="td" required>
+  <button class="btn">Add assignment</button>
+ </form>
+ <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+  <div class="tabs" id="tfilter" style="margin:0"><button data-f="all" class="on">All</button><button data-f="pending">Pending</button><button data-f="done">Done</button></div>
+  <input type="text" id="tq" placeholder="Search assignments" style="flex:1 1 160px">
+ </div>
+ <div id="tlist"></div>
+</section>
+
+<section class="view" id="v-att">
+ <h2>Attendance</h2><p class="sub">Mark each class as it happens. The calculator tells you how many you can miss.</p>
+ <form class="row" id="af">
+  <input type="text" id="an" placeholder="Subject name" required>
+  <button class="btn">Add subject</button>
+  <label style="margin-left:auto;display:flex;gap:8px;align-items:center">Minimum required <input type="number" id="tgt" min="50" max="95" style="width:70px"> %</label>
+ </form>
+ <div class="grid" id="alist"></div>
+</section>
+
+<section class="view" id="v-tt">
+ <h2>Timetable</h2><p class="sub">Your current class is outlined.</p>
+ <form class="row" id="ttf">
+  <select id="td1"></select>
+  <input type="time" id="ts1" required><input type="time" id="te1" required>
+  <input type="text" id="tn1" placeholder="Class name" required>
+  <button class="btn">Add class</button>
+ </form>
+ <div class="tt-grid" id="ttlist"></div>
+</section>
+
+<section class="view" id="v-gpa">
+ <h2>Grades</h2><p class="sub">SGPA on a 10-point scale. Add last semesters' CGPA to see your updated CGPA.</p>
+ <div class="card">
+  <div id="gplist"></div>
+  <button class="btn ghost" id="gadd">Add subject</button>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;align-items:center">Previous CGPA <input type="number" id="pcg" step=".01" min="0" max="10" style="width:90px"> over <input type="number" id="pcr" min="0" style="width:90px"> credits</div>
+  <div class="res"><div><div class="big" id="sg">0.00</div><span class="sub">SGPA</span></div><div><div class="big" id="cg">–</div><span class="sub">Updated CGPA</span></div></div>
+ </div>
+</section>
+
+<section class="view" id="v-notes">
+ <h2>Notes</h2><p class="sub">Quick thoughts, formulas, reminders.</p>
+ <form class="row" id="nf"><textarea id="nt" rows="2" placeholder="Write a note" required></textarea><button class="btn">Save note</button></form>
+ <div class="notes" id="nlist"></div>
+</section>
+
+<section class="view" id="v-focus">
+ <h2>Focus timer</h2><p class="sub" id="pcount"></p>
+ <div class="card pomo">
+  <div class="tabs c" id="pm"><button data-m="focus" class="on">Focus 25</button><button data-m="short">Break 5</button><button data-m="long">Long 15</button></div>
+  <svg class="ring" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="40"/><circle class="fg" id="pring" cx="50" cy="50" r="40" stroke="var(--acc)" stroke-dasharray="251.3" stroke-dashoffset="0"/><text id="ptime" x="50" y="50">25:00</text></svg>
+  <div class="acts"><button class="btn" id="pgo">Start</button><button class="btn ghost" id="prs">Reset</button></div>
+ </div>
+</section>
+
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],G={O:10,'A+':9,A:8,'B+':7,B:6,C:5,P:4,F:0};
+const K='campushub.v1',def=()=>({tasks:[],subs:[],tt:[],gp:[{id:uid(),n:'',cr:'',g:'A'}],notes:[],theme:null,tgt:75,prev:{cg:'',cr:''},sessions:0});
+let S;try{S=Object.assign(def(),JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){S=def()}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const empty=t=>`<div class="empty">${t}</div>`;
+const todayIdx=()=>(new Date().getDay()+6)%7;
+const mins=t=>{const[a,b]=t.split(':').map(Number);return a*60+b};
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const ring=(p,c)=>`<svg class="ring" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="40"/><circle class="fg" cx="50" cy="50" r="40" stroke="${c}" stroke-dasharray="251.3" stroke-dashoffset="${251.3*(1-Math.min(p,100)/100)}"/><text x="50" y="50">${Math.round(p)}%</text></svg>`;
+
+/* theme */
+function theme(t){document.documentElement.dataset.theme=t;S.theme=t;save()}
+theme(S.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));
+$('#theme').onclick=()=>theme(S.theme=='dark'?'light':'dark');
+
+/* nav */
+function show(v){$$('.view').forEach(e=>e.classList.toggle('on',e.id=='v-'+v));$$('nav [data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==v));renderAll();scrollTo(0,0)}
+$$('nav [data-v]').forEach(b=>b.onclick=()=>show(b.dataset.v));
+
+/* helpers */
+const attPct=s=>s.tot?s.att/s.tot*100:0;
+function sgpa(){let c=0,p=0;S.gp.forEach(g=>{const cr=parseFloat(g.cr)||0;c+=cr;p+=cr*G[g.g]});return{c,p,v:c?p/c:0}}
+function rel(ms){const a=Math.abs(ms);return a<36e5?Math.max(1,Math.round(a/6e4))+'m':a<864e5?Math.floor(a/36e5)+'h':Math.floor(a/864e5)+'d'}
+
+/* home */
+function rHome(){
+ const d=new Date(),h=d.getHours();
+ $('#greet').textContent=(h<12?'Good morning':h<18?'Good afternoon':'Good evening');
+ $('#date').textContent=d.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'});
+ const td=S.tt.filter(c=>c.d==todayIdx()).sort((a,b)=>mins(a.s)-mins(b.s)),n=nowMin();
+ const cur=td.find(c=>mins(c.s)<=n&&n<mins(c.e)),nxt=td.find(c=>mins(c.s)>n);
+ if(cur){$('#nowlbl').textContent='In class now';$('#nowbig').textContent=cur.n;$('#nowsub').textContent=`Ends at ${cur.e}`+(nxt?`. Next: ${nxt.n} at ${nxt.s}`:'')}
+ else if(nxt){$('#nowlbl').textContent='Next class';$('#nowbig').textContent=nxt.n;$('#nowsub').textContent=`Starts at ${nxt.s}`}
+ else{$('#nowlbl').textContent='Timetable';$('#nowbig').textContent=S.tt.length?'No more classes today':'Nothing scheduled';$('#nowsub').textContent=S.tt.length?'Good time to catch up on assignments.':'Add your classes in Timetable.'}
+ const pend=S.tasks.filter(t=>!t.done).sort((a,b)=>a.due-b.due),urgent=pend.filter(t=>t.due-Date.now()<864e5).length;
+ const T=S.subs.reduce((a,s)=>[a[0]+s.att,a[1]+s.tot],[0,0]),ap=T[1]?T[0]/T[1]*100:null;
+ $('#stats').innerHTML=[[pend.length,'Assignments pending'],[urgent,'Due within 24 hours'],[ap==null?'–':Math.round(ap)+'%','Overall attendance'],[sgpa().c?sgpa().v.toFixed(2):'–','Current SGPA']].map(x=>`<div class="card stat"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');
+ $('#soon').innerHTML=pend.length?pend.slice(0,3).map(taskHTML).join(''):empty('No pending assignments. Add one in Assignments.');
+}
+
+/* tasks */
+let filt='all';
+function taskHTML(t){
+ const ms=t.due-Date.now(),c=t.done?'done':ms<0?'late':ms<864e5?'hot':ms<2592e5?'warm':'';
+ return `<div class="card task ${c}"><button class="chk" data-a="tdone" data-id="${t.id}" aria-label="Toggle done"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></button><div class="grow"><div class="tt">${esc(t.title)}</div><small>${t.sub?esc(t.sub)+' · ':''}${t.done?'Completed':ms<0?'Overdue by '+rel(ms):'Due in '+rel(ms)} (${new Date(t.due).toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})})</small></div><button class="x" data-a="tdel" data-id="${t.id}" aria-label="Delete">×</button></div>`}
+function rTasks(){
+ const q=$('#tq').value.toLowerCase();
+ const l=S.tasks.filter(t=>(filt=='all'||(filt=='done'?t.done:!t.done))&&(t.title+' '+t.sub).toLowerCase().includes(q)).sort((a,b)=>a.done-b.done||a.due-b.due);
+ $('#tlist').innerHTML=l.length?l.map(taskHTML).join(''):empty(S.tasks.length?'Nothing matches. Try another filter or search.':'No assignments yet. Add your first one above.');
+}
+$('#tf').onsubmit=e=>{e.preventDefault();S.tasks.push({id:uid(),title:$('#tn').value.trim(),sub:$('#ts').value.trim(),due:Date.parse($('#td').value),done:false});save();e.target.reset();rTasks()};
+$('#tq').oninput=rTasks;
+$('#tfilter').onclick=e=>{const b=e.target.closest('[data-f]');if(!b)return;filt=b.dataset.f;$$('#tfilter button').forEach(x=>x.classList.toggle('on',x==b));rTasks()};
+
+/* attendance */
+function rAtt(){
+ $('#tgt').value=S.tgt;const T=S.tgt/100;
+ $('#alist').innerHTML=S.subs.length?S.subs.map(s=>{
+  const p=attPct(s);let m;
+  if(!s.tot)m='No classes recorded yet.';
+  else if(p>=S.tgt){const k=Math.floor(s.att/T-s.tot);m=k>0?`You can miss ${k} more class${k>1?'es':''}.`:'On the line. Attend the next class.'}
+  else m=`Attend the next ${Math.ceil((T*s.tot-s.att)/(1-T))} classes in a row to reach ${S.tgt}%.`;
+  return `<div class="card att">${ring(p,!s.tot||p>=S.tgt?'var(--ok)':'var(--bad)')}<div class="grow"><h3>${esc(s.n)}</h3><p>${s.att} of ${s.tot} attended. ${m}</p><button class="btn sm" data-a="pres" data-id="${s.id}">Present</button> <button class="btn sm ghost" data-a="abs" data-id="${s.id}">Absent</button> <button class="x" data-a="sdel" data-id="${s.id}" aria-label="Delete">×</button></div></div>`}).join(''):`<div style="grid-column:1/-1">${empty('No subjects yet. Add a subject to start tracking.')}</div>`;
+}
+$('#af').onsubmit=e=>{e.preventDefault();S.subs.push({id:uid(),n:$('#an').value.trim(),att:0,tot:0});save();e.target.reset();rAtt()};
+$('#tgt').oninput=e=>{S.tgt=Math.min(95,Math.max(50,+e.target.value||75));save();rAtt()};
+
+/* timetable */
+$('#td1').innerHTML=DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('');$('#td1').value=todayIdx();
+function rTT(){
+ const n=nowMin();
+ $('#ttlist').innerHTML=S.tt.length?DAYS.map((d,i)=>{
+  const l=S.tt.filter(c=>c.d==i).sort((a,b)=>mins(a.s)-mins(b.s));
+  return `<div class="day ${i==todayIdx()?'today':''}"><h3>${d}</h3>${l.map(c=>`<div class="slot ${i==todayIdx()&&mins(c.s)<=n&&n<mins(c.e)?'cur':''}"><div>${esc(c.n)}<small>${c.s} – ${c.e}</small></div><button class="x" data-a="ttdel" data-id="${c.id}" aria-label="Delete">×</button></div>`).join('')||'<small style="color:var(--mute)">Free</small>'}</div>`}).join(''):`<div style="grid-column:1/-1">${empty('Your week is empty. Add your first class above.')}</div>`;
+}
+$('#ttf').onsubmit=e=>{e.preventDefault();if(mins($('#te1').value)<=mins($('#ts1').value)){alert('End time must be after start time.');return}S.tt.push({id:uid(),d:+$('#td1').value,s:$('#ts1').value,e:$('#te1').value,n:$('#tn1').value.trim()});save();$('#ts1').value=$('#te1').value=$('#tn1').value='';rTT()};
+
+/* grades */
+function rGP(){
+ $('#gplist').innerHTML=S.gp.map(g=>`<div class="gp"><input type="text" placeholder="Subject" value="${esc(g.n)}" data-f="n" data-id="${g.id}"><input type="number" placeholder="Credits" min="0" value="${g.cr}" data-f="cr" data-id="${g.id}"><select data-f="g" data-id="${g.id}">${Object.keys(G).map(k=>`<option ${k==g.g?'selected':''}>${k}</option>`).join('')}</select><button class="x" data-a="gdel" data-id="${g.id}" aria-label="Remove">×</button></div>`).join('');
+ $('#pcg').value=S.prev.cg;$('#pcr').value=S.prev.cr;calc();
+}
+function calc(){
+ const r=sgpa();$('#sg').textContent=r.v.toFixed(2);
+ const pc=parseFloat(S.prev.cg),pr=parseFloat(S.prev.cr);
+ $('#cg').textContent=pc>=0&&pr>0&&r.c?((pc*pr+r.p)/(pr+r.c)).toFixed(2):'–';
+}
+$('#gadd').onclick=()=>{S.gp.push({id:uid(),n:'',cr:'',g:'A'});save();rGP()};
+$('#pcg').oninput=$('#pcr').oninput=()=>{S.prev={cg:$('#pcg').value,cr:$('#pcr').value};save();calc()};
+
+/* notes */
+function rNotes(){
+ $('#nlist').innerHTML=S.notes.length?S.notes.map((n,i)=>`<div class="note" style="background:var(--n${i%4})">${esc(n.t)}<button class="x" data-a="ndel" data-id="${n.id}" aria-label="Delete">×</button></div>`).join(''):empty('No notes yet. Write something above.');
+}
+$('#nf').onsubmit=e=>{e.preventDefault();S.notes.unshift({id:uid(),t:$('#nt').value.trim()});save();e.target.reset();rNotes()};
+
+/* pomodoro */
+const M={focus:25,short:5,long:15};let mode='focus',left=1500,tm=null;
+function rPomo(){
+ const mm=String(Math.floor(left/60)).padStart(2,'0'),ss=String(left%60).padStart(2,'0');
+ $('#ptime').textContent=mm+':'+ss;$('#pring').style.strokeDashoffset=251.3*(1-left/(M[mode]*60));
+ $('#pgo').textContent=tm?'Pause':'Start';document.title=tm?`${mm}:${ss} · Campus Hub`:'Campus Hub';
+ $('#pcount').textContent=`Focus sessions completed: ${S.sessions}`;
+}
+function beep(){try{const a=new AudioContext(),o=a.createOscillator();o.connect(a.destination);o.start();o.stop(a.currentTime+.4)}catch(e){}}
+function pset(m){clearInterval(tm);tm=null;mode=m;left=M[m]*60;$$('#pm button').forEach(b=>b.classList.toggle('on',b.dataset.m==m));rPomo()}
+$('#pm').onclick=e=>{const b=e.target.closest('[data-m]');if(b)pset(b.dataset.m)};
+$('#prs').onclick=()=>pset(mode);
+$('#pgo').onclick=()=>{
+ if(tm){clearInterval(tm);tm=null}
+ else tm=setInterval(()=>{left--;if(left<=0){clearInterval(tm);tm=null;left=0;beep();if(mode=='focus'){S.sessions++;save()}}rPomo()},1000);
+ rPomo();
+};
+
+/* shared click actions */
+const A={
+ tdone:id=>{const t=S.tasks.find(x=>x.id==id);t.done=!t.done},
+ tdel:id=>S.tasks=S.tasks.filter(x=>x.id!=id),
+ pres:id=>{const s=S.subs.find(x=>x.id==id);s.att++;s.tot++},
+ abs:id=>{S.subs.find(x=>x.id==id).tot++},
+ sdel:id=>S.subs=S.subs.filter(x=>x.id!=id),
+ ttdel:id=>S.tt=S.tt.filter(x=>x.id!=id),
+ gdel:id=>{S.gp=S.gp.filter(x=>x.id!=id);if(!S.gp.length)S.gp.push({id:uid(),n:'',cr:'',g:'A'})},
+ ndel:id=>S.notes=S.notes.filter(x=>x.id!=id)
+};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;A[b.dataset.a](b.dataset.id);save();renderAll()});
+document.addEventListener('input',e=>{const el=e.target,f=el.dataset.f;if(!f||!el.dataset.id)return;const g=S.gp.find(x=>x.id==el.dataset.id);if(g){g[f]=el.value;save();calc()}});
+
+function renderAll(){rHome();rTasks();rAtt();rTT();rGP();rNotes();rPomo()}
+renderAll();
+setInterval(()=>{if($('#v-home').classList.contains('on'))rHome();if($('#v-tt').classList.contains('on'))rTT()},60000);
+</script>
+</body>
+</html>
